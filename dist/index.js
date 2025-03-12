@@ -1,14 +1,27 @@
-import { TodoItem } from "./TodoItem.js";
 import { TodoCollection } from "./TodoCollection.js";
-let todos = [
-    new TodoItem(1, "Buy Flowers"), new TodoItem(2, "Get Shoes"),
-    new TodoItem(3, "Collect Tickets"), new TodoItem(4, "Call Joe", true)
-];
-let collection = new TodoCollection("Adam", todos);
-console.clear();
-console.log(`${collection.userName}'s Todo List`);
-let newId = collection.addTodo("Go for run");
-let todoItem = collection.getTodoById(newId);
-if (todoItem) {
-    todoItem.printDetails();
+const todoCollection = new TodoCollection("Usuario");
+const tareaInput = document.getElementById("tareaAñadida");
+const addButton = document.getElementById("añadirTarea");
+const resultado = document.getElementById("resultado");
+function renderTodoList() {
+    const items = todoCollection.getTodoItems(false);
+    resultado.innerHTML = items.length > 0
+        ? items.map(item => `<p>
+            <span>${item.id}: ${item.task}</span>
+            <button onclick="markAsComplete(${item.id})">✔</button>
+        </p>`).join("")
+        : "No hay tareas pendientes";
 }
+addButton.addEventListener("click", () => {
+    const taskText = tareaInput.value.trim();
+    if (taskText) {
+        todoCollection.addTodo(taskText);
+        tareaInput.value = "";
+        renderTodoList();
+    }
+});
+window.markAsComplete = (id) => {
+    todoCollection.markComplete(id, true);
+    renderTodoList();
+};
+renderTodoList();
